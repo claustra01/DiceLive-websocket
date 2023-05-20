@@ -4,11 +4,22 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/claustra01/hackz-tsumaguro-websocket/util"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/net/websocket"
 )
 
 func SocketHandler() echo.HandlerFunc {
+
+	//  map構造
+	//  {
+	// 	  "stream1": [socket1, socket2, ...],
+	// 	  "stream2": ...,
+	//  }
+	// socketlist := make(map[string][]*websocket.Conn)
+	// reactionlist := make(map[string]int)
+	// commentlist := make(map[string][]string)
+
 	return func(c echo.Context) error {
 
 		log.Println("Serving...")
@@ -23,8 +34,9 @@ func SocketHandler() echo.HandlerFunc {
 
 			for {
 				// Client からのメッセージを読み込む
-				msg := ""
-				err := websocket.Message.Receive(ws, &msg)
+				rawMsg := ""
+				jsonMsg := util.MsgFromClient{}
+				err := websocket.Message.Receive(ws, &rawMsg)
 				if err != nil {
 					if err.Error() == "EOF" {
 						log.Println(fmt.Errorf("read %s", err))
@@ -34,8 +46,14 @@ func SocketHandler() echo.HandlerFunc {
 					c.Logger().Error(err)
 				}
 
+				// Jsonに展開
+				jsonMsg = util.StringToJson(rawMsg)
+
+				fmt.Println(rawMsg)
+				fmt.Println(jsonMsg)
+
 				// Client からのメッセージを元に返すメッセージを作成し送信する
-				err = websocket.Message.Send(ws, fmt.Sprintf("Server: \"%s\" received!", msg))
+				err = websocket.Message.Send(ws, fmt.Sprintf("Server: \"%s\" received!", rawMsg))
 				if err != nil {
 					c.Logger().Error(err)
 				}
