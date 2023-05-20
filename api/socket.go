@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/claustra01/hackz-tsumaguro-websocket/common"
 	"github.com/claustra01/hackz-tsumaguro-websocket/util"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/net/websocket"
@@ -11,14 +12,9 @@ import (
 
 func SocketHandler() echo.HandlerFunc {
 
-	//  map構造
-	//  {
-	// 	  "stream1": [socket1, socket2, ...],
-	// 	  "stream2": ...,
-	//  }
-	socketlist := make(map[string][]*websocket.Conn)
-	commentlist := make(map[string][]string)
-	reactionlist := make(map[string]int)
+	socketlist := common.SocketList
+	commentlist := common.CommentList
+	reactionlist := common.ReactionList
 
 	return func(c echo.Context) error {
 
