@@ -11,12 +11,12 @@ import (
 func SocketHandler() echo.HandlerFunc {
 	return func(c echo.Context) error {
 
-		log.Println("Serving at localhost:8000...")
+		log.Println("Serving...")
 		websocket.Handler(func(ws *websocket.Conn) {
 			defer ws.Close()
 
 			// 初回のメッセージを送信
-			err := websocket.Message.Send(ws, "Server: Hello, Next.js!")
+			err := websocket.Message.Send(ws, "Server: Hello, Client!")
 			if err != nil {
 				c.Logger().Error(err)
 			}
