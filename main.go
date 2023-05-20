@@ -16,7 +16,7 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	e.GET("/ws", api.SocketHandler())
+	e.GET("/socket", api.SocketHandler())
 
 	e.Logger.Fatal(e.Start(":8001"))
 }
