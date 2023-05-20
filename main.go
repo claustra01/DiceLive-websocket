@@ -15,5 +15,5 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!") // 出力
 	})
 
-	e.Logger.Fatal(e.Start(":8080")) // サーバーをポート番号8080で起動
+	e.Logger.Fatal(e.Start(":8001")) // サーバーをポート番号8001で起動
 }
