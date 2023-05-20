@@ -17,20 +17,14 @@ func SocketHandler() echo.HandlerFunc {
 	// 	  "stream2": ...,
 	//  }
 	socketlist := make(map[string][]*websocket.Conn)
-	// reactionlist := make(map[string]int)
-	// commentlist := make(map[string][]string)
+	commentlist := make(map[string][]string)
+	reactionlist := make(map[string]int)
 
 	return func(c echo.Context) error {
 
 		log.Println("Serving...")
 		websocket.Handler(func(ws *websocket.Conn) {
 			defer ws.Close()
-
-			// 初回のメッセージを送信
-			err := websocket.Message.Send(ws, "Server: Hello, Client!")
-			if err != nil {
-				c.Logger().Error(err)
-			}
 
 			for {
 				// Client からのメッセージを読み込む
@@ -54,10 +48,21 @@ func SocketHandler() echo.HandlerFunc {
 					socketlist[jsonMsg.StreamId] = append(socketlist[jsonMsg.StreamId], ws)
 				}
 
-				// Client からのメッセージを元に返すメッセージを作成し送信する
-				err = websocket.Message.Send(ws, fmt.Sprintf("Server: \"%s\" received!", rawMsg))
-				if err != nil {
-					c.Logger().Error(err)
+				// コメントが送信された時
+
+				// リアクションされた時
+				if jsonMsg.Comment == "" && jsonMsg.Reaction == true && jsonMsg.IsConnected == true {
+					reactionlist[jsonMsg.StreamId]++
+					for _, ws_v := range socketlist[jsonMsg.StreamId] {
+						sendJson := util.MsgFromServer{
+							Comments: commentlist[jsonMsg.StreamId],
+							Reaction: reactionlist[jsonMsg.StreamId],
+						}
+						err = websocket.Message.Send(ws_v, fmt.Sprintf("%s", util.JsonToString(sendJson)))
+						if err != nil {
+							c.Logger().Error(err)
+						}
+					}
 				}
 			}
 		}).ServeHTTP(c.Response(), c.Request())
