@@ -16,7 +16,7 @@ func SocketHandler() echo.HandlerFunc {
 	// 	  "stream1": [socket1, socket2, ...],
 	// 	  "stream2": ...,
 	//  }
-	// socketlist := make(map[string][]*websocket.Conn)
+	socketlist := make(map[string][]*websocket.Conn)
 	// reactionlist := make(map[string]int)
 	// commentlist := make(map[string][]string)
 
@@ -49,8 +49,10 @@ func SocketHandler() echo.HandlerFunc {
 				// Jsonに展開
 				jsonMsg = util.StringToJson(rawMsg)
 
-				fmt.Println(rawMsg)
-				fmt.Println(jsonMsg)
+				// 初めて接続された時
+				if jsonMsg.Comment == "" && jsonMsg.Reaction == false && jsonMsg.IsConnected == true {
+					socketlist[jsonMsg.StreamId] = append(socketlist[jsonMsg.StreamId], ws)
+				}
 
 				// Client からのメッセージを元に返すメッセージを作成し送信する
 				err = websocket.Message.Send(ws, fmt.Sprintf("Server: \"%s\" received!", rawMsg))

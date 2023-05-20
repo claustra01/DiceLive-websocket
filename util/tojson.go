@@ -6,9 +6,10 @@ import (
 )
 
 type MsgFromClient struct {
-	StreamId string `json:"stream_id"`
-	Comment  string `json:"comment"`
-	Reaction bool   `json:"reaction"`
+	StreamId    string `json:"stream_id"`
+	Comment     string `json:"comment"`
+	Reaction    bool   `json:"reaction"`
+	IsConnected bool   `json:"is_connected"`
 }
 
 func StringToJson(rawMsg string) MsgFromClient {
