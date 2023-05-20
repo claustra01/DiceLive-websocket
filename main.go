@@ -17,6 +17,7 @@ func main() {
 	})
 
 	e.GET("/socket", api.SocketHandler())
+	e.GET("/close/:id", api.CloseHandler())
 
 	e.Logger.Fatal(e.Start(":8001"))
 }
