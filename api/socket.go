@@ -46,9 +46,32 @@ func SocketHandler() echo.HandlerFunc {
 				// 初めて接続された時
 				if jsonMsg.Comment == "" && jsonMsg.Reaction == false && jsonMsg.IsConnected == true {
 					socketlist[jsonMsg.StreamId] = append(socketlist[jsonMsg.StreamId], ws)
+					for _, ws_v := range socketlist[jsonMsg.StreamId] {
+						sendJson := util.MsgFromServer{
+							Comments: commentlist[jsonMsg.StreamId],
+							Reaction: reactionlist[jsonMsg.StreamId],
+						}
+						err = websocket.Message.Send(ws_v, fmt.Sprintf("%s", util.JsonToString(sendJson)))
+						if err != nil {
+							c.Logger().Error(err)
+						}
+					}
 				}
 
 				// コメントが送信された時
+				if jsonMsg.Comment != "" && jsonMsg.Reaction == false && jsonMsg.IsConnected == true {
+					commentlist[jsonMsg.StreamId] = append(commentlist[jsonMsg.StreamId], jsonMsg.Comment)
+					for _, ws_v := range socketlist[jsonMsg.StreamId] {
+						sendJson := util.MsgFromServer{
+							Comments: commentlist[jsonMsg.StreamId],
+							Reaction: reactionlist[jsonMsg.StreamId],
+						}
+						err = websocket.Message.Send(ws_v, fmt.Sprintf("%s", util.JsonToString(sendJson)))
+						if err != nil {
+							c.Logger().Error(err)
+						}
+					}
+				}
 
 				// リアクションされた時
 				if jsonMsg.Comment == "" && jsonMsg.Reaction == true && jsonMsg.IsConnected == true {
