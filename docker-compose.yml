@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+
+  server:
+    build: .
+    volumes:
+      - ./:/go/src/app
+    ports:
+      - "8001:8001"
