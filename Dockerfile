@@ -7,7 +7,7 @@ ENV ROOT=/go/src/app
 WORKDIR ${ROOT}
 
 COPY . .
-EXPOSE 8001
+EXPOSE 8501
 
 RUN go install
 CMD ["go", "run", "main.go"]
